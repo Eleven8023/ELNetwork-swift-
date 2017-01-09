@@ -1,0 +1,6 @@
+framework module Pods_ELSwiftNetwork {
+  umbrella header "Pods-ELSwiftNetwork-umbrella.h"
+
+  export *
+  module * { export * }
+}
