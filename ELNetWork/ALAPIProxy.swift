@@ -11,7 +11,7 @@ import UIKit
 import Alamofire
 
 class ALAPIProxy: NSObject {
-    // MARK: - Singleton
+    // MARK: - Singleton 注: 此处session一定要设置全局变量 要不然 https 请求不成功
     static let shareInstance = ALAPIProxy.init()
     private var session = SessionManager.default
     
@@ -26,7 +26,7 @@ class ALAPIProxy: NSObject {
         // 生成签名, 请求参数拼接签名
         params["sign"] = paramsArray.convertToString().md5
     }
-    
+    // 配置https
     private func configRequestSecurity() -> SessionManager{
         let path = Bundle.main.path(forResource: cerName, ofType: nil)
         let cerData = NSData.init(contentsOfFile: path!)
@@ -41,7 +41,7 @@ class ALAPIProxy: NSObject {
         )
         return sessionManager;
     }
-    
+    // get 请求
     func callGetTypeRequest(urlStr:String, params:[String:Any], callback:@escaping ALCallBack) -> Request {
         var paramsSigned = params
         configRequestParams(params: &paramsSigned)
@@ -66,7 +66,7 @@ class ALAPIProxy: NSObject {
         print(response)
         })
     }
-    
+    // post请求
     func callPostTypeRequest(urlStr:String, params:[String:Any], callback:@escaping ALCallBack) -> Request {
         var paramsSigned = params
         configRequestParams(params: &paramsSigned)
@@ -95,25 +95,3 @@ class ALAPIProxy: NSObject {
     }
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

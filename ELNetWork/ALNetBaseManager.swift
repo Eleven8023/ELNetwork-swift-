@@ -9,7 +9,7 @@
 import UIKit
 import Foundation
 import Alamofire
-
+// MARK:- errorType
 enum ALNetManagerErrorType {
     case noRequest
     case success
@@ -18,22 +18,22 @@ enum ALNetManagerErrorType {
     case timeout
     case noNetWork
 }
-
+// MARK:- requestType
 enum ALNetManagerRequestType {
     case get
     case post
 }
-// MARK: - protocol
+// MARK: - protocol 调用业务接口成功与失败
 protocol ALNetManagerCallBackDelegate:NSObjectProtocol {
     func callApiDidSuccess(manager:ALNetBaseManager)
     func callApiDidFailed(manager:ALNetBaseManager)
     
 }
-
+// MARK: - protocol 成功后返回数据
 protocol ALNetManagerCallBackDataSource:NSObjectProtocol {
     func paramsForRequest(manager:ALNetBaseManager) -> [String:Any]
 }
-
+// MARK: - interceptor 调用前和成功后操作
 protocol ALNetManagerInterceptor:NSObjectProtocol {
     func beforeCallApi(manager:ALNetBaseManager)
     func afterRequestResponse(manager:ALNetBaseManager)
@@ -42,7 +42,7 @@ protocol ALNetManagerInterceptor:NSObjectProtocol {
 protocol ALNetManagerCallbackDataReformer:NSObjectProtocol {
     func reformerData(manager:ALNetBaseManager, data:Any) -> Any
 }
-
+// MARK: - 属性名称 methodName 接口名称  servicePath: 接口路径 requestType: 请求类型 方法:cleanData
 protocol ALNetManagerProtocol:NSObjectProtocol {
     var methodName: String{ get set }
     var servicePath: String{ get set }
@@ -70,7 +70,6 @@ class ALNetBaseManager: NSObject {
             return false
         }
     }
-    
     var isReachable: Bool{
         get{
             if let network = NetworkReachabilityManager.init() {
@@ -79,7 +78,6 @@ class ALNetBaseManager: NSObject {
             return false
         }
     }
-    
     
     override init() {
         errorType = .noRequest
@@ -116,6 +114,7 @@ class ALNetBaseManager: NSObject {
     func loadData() -> Request? {
         if let dataSource = dataSource {
             var params = dataSource.paramsForRequest(manager: self)
+        // MARK: 公参配置 这里是action是根据事例后台配置每个接口对应的名称 具体配置根据自己业务而定
             params["action"] = child?.methodName
             params["version"] = "2.1.2"
             params["app_key"] = KSFNetworkAppKey
@@ -127,7 +126,7 @@ class ALNetBaseManager: NSObject {
         }
         return nil
     }
-    
+    // MARK: Request
     func loadData(params:[String:Any]) -> Request? {
         guard let childManager = child else {
             return nil
@@ -173,7 +172,7 @@ class ALNetBaseManager: NSObject {
         return request
     }
     
-    // MARK: - api callback
+    // MARK: - api callback  status  状态吗 msg 请求信息  data 数据源 根据业务而定
     
     func successOnCallingAPI(responseInfo:ALURLResponse) {
         if let request = responseInfo.request {
